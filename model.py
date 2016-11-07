@@ -14,7 +14,7 @@ class DCGAN(object):
                  batch_size=64, sample_size = 64, output_size=64,
                  y_dim=None, z_dim=100, gf_dim=64, df_dim=64,
                  gfc_dim=1024, dfc_dim=1024, c_dim=3, dataset_name='default',
-                 checkpoint_dir=None):
+                 checkpoint_dir=None, alt_struc = False):
         """
 
         Args:
@@ -36,6 +36,7 @@ class DCGAN(object):
         self.image_size = image_size
         self.sample_size = sample_size
         self.output_size = output_size
+        self.alt_scruc = alt_struc
 
         self.y_dim = y_dim
         self.z_dim = z_dim
@@ -273,8 +274,10 @@ class DCGAN(object):
     def generator(self, z, y=None):
         if not self.y_dim:
             s = self.output_size
-            s2, s4, s8, s16 = int(s/2), int(s/4), int(s/8), int(s/16)
-
+            if self.alt_scruc:
+                s2, s4, s8, s16 = int(s), int(s), int(s/2), int(s/4)
+            else: 
+                s2, s4, s8, s16 = int(s/2), int(s/4), int(s/8), int(s/16)
             # project `z` and reshape
             self.z_, self.h0_w, self.h0_b = linear(z, self.gf_dim*8*s16*s16, 'g_h0_lin', with_w=True)
 

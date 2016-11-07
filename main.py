@@ -22,6 +22,7 @@ flags.DEFINE_string("sample_dir", "samples", "Directory name to save the image s
 flags.DEFINE_boolean("is_train", False, "True for training, False for testing [False]")
 flags.DEFINE_boolean("is_crop", False, "True for training, False for testing [False]")
 flags.DEFINE_boolean("visualize", False, "True for visualizing, False for nothing [False]")
+flags.DEFINE_boolean("is_alternate", False, "True for higher-parameter generator[False]")
 FLAGS = flags.FLAGS
 
 def main(_):
@@ -38,7 +39,7 @@ def main(_):
                     dataset_name=FLAGS.dataset, is_crop=FLAGS.is_crop, checkpoint_dir=FLAGS.checkpoint_dir)
         else:
             dcgan = DCGAN(sess, image_size=FLAGS.image_size, batch_size=FLAGS.batch_size, output_size=FLAGS.output_size, c_dim=FLAGS.c_dim,
-                    dataset_name=FLAGS.dataset, is_crop=FLAGS.is_crop, checkpoint_dir=FLAGS.checkpoint_dir)
+                    dataset_name=FLAGS.dataset, is_crop=FLAGS.is_crop, checkpoint_dir=FLAGS.checkpoint_dir, alt_struc = FLAGS.is_alternate)
 
         if FLAGS.is_train:
             dcgan.train(FLAGS)
