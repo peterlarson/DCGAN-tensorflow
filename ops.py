@@ -97,7 +97,7 @@ def deconv2d(input_, output_shape,
 
 
         biases = tf.get_variable('biases', [output_shape[-1]], initializer=tf.constant_initializer(0.0))
-        conv = tf.reshape(tf.nn.bias_add(conv, biases), conv.get_shape())
+        conv = tf.nn.bias_add(conv, biases)
 
         if with_w:
             return conv, w, biases
