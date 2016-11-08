@@ -246,13 +246,22 @@ class DCGAN(object):
             tf.get_variable_scope().reuse_variables()
 
         if not self.y_dim:
-            h0 = lrelu(conv2d(image, self.df_dim, name='d_h0_conv'))
-            h1 = lrelu(self.d_bn1(conv2d(h0, self.df_dim*2, name='d_h1_conv')))
-            h2 = lrelu(self.d_bn2(conv2d(h1, self.df_dim*4, name='d_h2_conv')))
-            h3 = lrelu(self.d_bn3(conv2d(h2, self.df_dim*8, name='d_h3_conv')))
-            h4 = linear(tf.reshape(h3, [self.batch_size, -1]), 1, 'd_h3_lin')
-
+            
+            #s2, s4, s8, s16 = int(s), int(s/2), int(s/4), int(s/16)
+            if self.alt_struc:
+                h0 = lrelu(conv2d(image, self.df_dim, name='d_h0_conv'))
+                h1 = lrelu(self.d_bn1(conv2d(h0, self.df_dim*4, name='d_h1_conv')))
+                h2 = lrelu(self.d_bn2(conv2d(h1, self.df_dim*8, name='d_h2_conv')))
+                h3 = lrelu(self.d_bn3(conv2d(h2, self.df_dim*16, name='d_h3_conv')))
+                h4 = linear(tf.reshape(h3, [self.batch_size, -1]), 1, 'd_h3_lin')
+            else: 
+                h0 = lrelu(conv2d(image, self.df_dim, name='d_h0_conv'))
+                h1 = lrelu(self.d_bn1(conv2d(h0, self.df_dim*2, name='d_h1_conv')))
+                h2 = lrelu(self.d_bn2(conv2d(h1, self.df_dim*4, name='d_h2_conv')))
+                h3 = lrelu(self.d_bn3(conv2d(h2, self.df_dim*8, name='d_h3_conv')))
+                h4 = linear(tf.reshape(h3, [self.batch_size, -1]), 1, 'd_h3_lin')
             return tf.nn.sigmoid(h4), h4
+
         else:
             yb = tf.reshape(y, [self.batch_size, 1, 1, self.y_dim])
             x = conv_cond_concat(image, yb)
@@ -275,7 +284,7 @@ class DCGAN(object):
         if not self.y_dim:
             s = self.output_size
             if self.alt_struc:
-                s2, s4, s8, s16 = int(s), int(s/2), int(s/8), int(s/16)
+                s2, s4, s8, s16 = int(s), int(s/2), int(s/4), int(s/16)
             else: 
                 s2, s4, s8, s16 = int(s/2), int(s/4), int(s/8), int(s/16)
             # project `z` and reshape
@@ -329,7 +338,7 @@ class DCGAN(object):
             s = self.output_size
 
             if self.alt_struc:
-                s2, s4, s8, s16 = int(s), int(s/2), int(s/8), int(s/16)
+                s2, s4, s8, s16 = int(s), int(s/2), int(s/4), int(s/16)
             else: 
                 s2, s4, s8, s16 = int(s/2), int(s/4), int(s/8), int(s/16)
 
