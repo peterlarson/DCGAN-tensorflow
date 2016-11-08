@@ -36,7 +36,7 @@ class DCGAN(object):
         self.image_size = image_size
         self.sample_size = sample_size
         self.output_size = output_size
-        self.alt_scruc = alt_struc
+        self.alt_struc = alt_struc
 
         self.y_dim = y_dim
         self.z_dim = z_dim
@@ -274,8 +274,8 @@ class DCGAN(object):
     def generator(self, z, y=None):
         if not self.y_dim:
             s = self.output_size
-            if self.alt_scruc:
-                s2, s4, s8, s16 = int(s), int(s), int(s/2), int(s/4)
+            if self.alt_struc:
+                s2, s4, s8, s16 = int(s), int(s/2), int(s/8), int(s/16)
             else: 
                 s2, s4, s8, s16 = int(s/2), int(s/4), int(s/8), int(s/16)
             # project `z` and reshape
@@ -327,7 +327,11 @@ class DCGAN(object):
         if not self.y_dim:
             
             s = self.output_size
-            s2, s4, s8, s16 = int(s/2), int(s/4), int(s/8), int(s/16)
+
+            if self.alt_struc:
+                s2, s4, s8, s16 = int(s), int(s/2), int(s/8), int(s/16)
+            else: 
+                s2, s4, s8, s16 = int(s/2), int(s/4), int(s/8), int(s/16)
 
             # project `z` and reshape
             h0 = tf.reshape(linear(z, self.gf_dim*8*s16*s16, 'g_h0_lin'),
